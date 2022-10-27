@@ -21,12 +21,13 @@ const createAccount = async (req, res) => {
 
 const updateAccount = async (req, res) => {
     try{
-        const {params:{ id }} = req;
-        const mapeo = useState.map(id);
-
-        const resp = await useState.map({
-           
-        })
+        const {body: dc } = req;
+        const { id, money, collectables } = dc;
+        const DC = db.collection('dcollections').doc(id);   
+        const resp = await DC.update({
+            money,
+            collectables
+        });
         res.send({
             status: 200,
             id
