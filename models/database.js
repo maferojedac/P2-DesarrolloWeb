@@ -9,4 +9,14 @@ const DCollection = new Schema(
   { timestamps: true }
 );
 
+const DVenta = new Schema(
+  {
+    operation: {type: String, require: true},
+    collection: {},
+    amount: {},
+    collection_price: {}
+  }
+)
+
 module.exports = mongoose.model('dcolections', DCollection);
+module.exports = mongoose.model('dventas', DVenta);

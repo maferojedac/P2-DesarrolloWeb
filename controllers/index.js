@@ -19,7 +19,7 @@ const createAccount = async (req, res) => {
 
 
 
-/* const updateAccount = async (req, res) => {
+const updateAccount = async (req, res) => {
     try{
         const {params:{ id }} = req;
         const mapeo = useState.map(id);
@@ -37,8 +37,28 @@ const createAccount = async (req, res) => {
 } 
 
 const CompraVenta = async (req, res) => {
-
-} */
+    try{
+        const {body: dv } = req;
+        const DC = db.collection('dcventas');   
+        const { _path: { sengments } } = await DC.add(dv);
+        const id = sengments[1];
+        res.send({
+            status: 200,
+            currentbalance: {
+                money,
+                collectibles:[
+                    {
+                        collection_name,
+                        amount,
+                        collection_price
+                    }
+                ]
+            }
+        });
+    }catch (error){
+        res.send(error);
+    }
+} 
 
 
 module.exports = {
