@@ -5,18 +5,12 @@ const DCollection = new Schema(
   {
     money: { rating: Number },
     collectables: { type: [String], required: true },
+    operation: {type: String, require: true},
+    collection_name: {type: String, require: true},
+    amount: {rating: Number},
+    collection_price: {rating: Number}
   },
   { timestamps: true }
 );
 
-const DVenta = new Schema(
-  {
-    operation: {type: String, require: true},
-    collection: {},
-    amount: {},
-    collection_price: {}
-  }
-)
-
 module.exports = mongoose.model('dcolections', DCollection);
-module.exports = mongoose.model('dventas', DVenta);

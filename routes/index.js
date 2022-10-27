@@ -8,8 +8,8 @@ const {
     const router = express.Router();
 
     router.post('/account', createAccount);
-    /* router.put('/account/', updateAcount);
-    router.post('/account/:id/order', CompraVenta) */
+    /* router.put('/account/', updateAcount); */
+    router.post('/account/:id/order', CompraVenta)
 
     module.exports = {
         router

@@ -38,9 +38,9 @@ const updateAccount = async (req, res) => {
 
 const CompraVenta = async (req, res) => {
     try{
-        const {body: dv } = req;
-        const DC = db.collection('dcventas');   
-        const { _path: { sengments } } = await DC.add(dv);
+        const {body: dc } = req;
+        const DC = db.collection('dcollections');   
+        const { _path: { sengments } } = await DC.add(dc);
         const id = sengments[1];
         res.send({
             status: 200,
@@ -63,6 +63,6 @@ const CompraVenta = async (req, res) => {
 
 module.exports = {
     createAccount,
-    /* updateAccount,
-    CompraVenta */
+    updateAccount,
+    CompraVenta
 }
