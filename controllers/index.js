@@ -5,15 +5,21 @@ const createAccount = async (req, res) => {
     try{
         const {body: dc } = req;
         const DC = db.collection('dcollections');   
-        const { _path: { sengments } } = await DC.add(dc);
-        const id = sengments[1];
+        const { _path: { segments } } = await DC.add({
+            current_balance: {
+                money: dc.money,
+                collectibles: []
+            }
+        });
+        const id = segments[1];
         res.send({
             status: 200,
             id,
-            money,
+            money: dc.money,
             collectables: []
         });
     }catch (error){
+        console.log(error);
         res.send(error);
     }
   };
