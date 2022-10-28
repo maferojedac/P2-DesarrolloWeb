@@ -1,4 +1,5 @@
-let {userData} = require('../models/database')
+const FS = require('../firebase');
+const { db } = FS;
 
 const createAccount = async (req, res) => {
     try{
@@ -10,7 +11,7 @@ const createAccount = async (req, res) => {
             status: 200,
             id,
             money,
-            collectables
+            collectables: []
         });
     }catch (error){
         res.send(error);
@@ -41,8 +42,6 @@ const CompraVenta = async (req, res) => {
     try{
         const {body: dc } = req;
         const DC = db.collection('dcollections');   
-        const { _path: { sengments } } = await DC.add(dc);
-        const id = sengments[1];
         res.send({
             status: 200,
             currentbalance: {
