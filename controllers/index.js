@@ -2,7 +2,7 @@ const FS = require('../firebase');
 const { db } = FS;
 
 
-
+//unicamente crea una cuenta con dinero inicial
 const createAccount = async (req, res) => {
     try{
         const {body: dc } = req;
@@ -22,6 +22,7 @@ const createAccount = async (req, res) => {
             money: dc.money,
             collectables: []
         });
+        console.log(res)
     }catch (error){
         console.log(error); //es importante saber lo que pasa interiormente cuando aparece un error
         res.send(error);
@@ -29,24 +30,26 @@ const createAccount = async (req, res) => {
   };
 
 
-
+//necesitamos que se actualice el dinero que ya se tenia antes
+//y se muestre las colecciones existentes
 const updateAccount = async (req, res) => {
     try{
         const {body: dc } = req;
-        const { money: extraMoney } = dc; //necesitamos extraer el dinero almacenado
-        const DC = db.collection('dcollections').doc(id); /* se necesita buscar el id para la cuenta? */
-        
-        //necesitamos agregar nuevos objetos al actualizar
-        //solo si es la primera vez, necesita que pase
+        const DC = db.collection('dcollections');
 
+        //necesitamos extraer el dinero almacenado
         await DC.get()
-            .then(response => {
-
-                await DC.set({
+            .then((result) => {
+                result.docs.map((dc) => ({
+                    money: dc.money,
+                    newMoney: dc.money
+                }));
+                //actualizando el dinero
+                const dinero = DC.doc(dc.id).set({
                     current_balance: {
-                        money: oldMoney + extraMoney
+                        money: dc.money + dc.newMoney
                     }
-                }, {merge: true});
+                }, {merge: true}); //para concatenar con la info que habia anterior
             })
             .catch(error => {
                 console.log(error);
@@ -55,51 +58,75 @@ const updateAccount = async (req, res) => {
                     
                 })
             })
-
-        console.log(user);
-
         
-
-        /*const { _path: { segments } } = await DC.add({
-               collectibles: 
-               [ {
-                 collection_name,
-                 amount,
-                collection_price
-                } ]
-       });*/  
-
-
+            //actualizando con los coleccionables junto el dinero
         const resp = await DC.update({
-            money: dc.money + money,
-            collectables: [dc.collectables]
+            dinero,
+            collectables: [{
+                collection_name: "CARD_1",
+                amount: 2,
+                collection_price: 50
+            }]
         });
         res.send({
             status: 200,
-            id
+            resp
         });
     }catch (error){
+        console.log(error);
         res.send(error);
     }
-} 
+} //ya no supe como resovler el error que me daba al ejecutar este endpoint :(
 
+
+//necesitamos saber lo que el usuario quiere hacer: comprar/vender
+//vender-solo puede hacerlo si tiene colecciones disponibles en su inventario
+//comprar-solo puede hacerlo si tiene el dinero suficiente al comprar
+//        una vez realizada la compra, se añadira a sus colecciones disponibles para que esas las pueda vender
 const CompraVenta = async (req, res) => {
     try{
-        const {body: dc } = req;
-        const DC = db.collection('dcollections');   
-        res.send({
-            status: 200,
-            currentbalance: {
-                money,
-                collectibles:[
-                    {
-                        collection_name,
-                        amount,
-                        collection_price
-                    }
-                ]
+        const {params: {id, opt}, body: dc} = req;
+        const DC = db.collection('dcollections').doc(id);   
+
+        if(opt = "/BUY"){
+            
+        } else if(opt = "/SELL"){
+            if(db.collectables.length == 0)
+            {
+                res.send({
+                    status: 404,
+                    message: "You have no collections to sell"
+                });
+            } else {
+                await DC.get()
+                .then((result) => {
+                    result.docs.map((dc) => ({
+                        money: dc.money,
+                        collectables: dc.collectables
+                    }));
+                    const operacion = DC.doc(dc.id).set({
+                        operation: "SELL"
+                    }, {merge: true}); //para concatenar con la info que habia anterior
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.send({
+                        status: 404
+                    })
+                })
+
+                const resp = await DC.update({
+                    operacion,
+                    collectables: [collectables.dc]
+                });
+                res.send({
+                    status: 200,
+                    resp
+                });
+               
             }
-        });
+        }
+    
     }catch (error){
         res.send(error);
     }
